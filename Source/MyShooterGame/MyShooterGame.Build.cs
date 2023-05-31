@@ -16,7 +16,9 @@ public class MyShooterGame : ModuleRules
 		{ 
 			"MyShooterGame/Public/Player",
 			"MyShooterGame/Public/Components",
-			"MyShooterGame/Public/Dev"
+			"MyShooterGame/Public/Dev",
+			"MyShooterGame/Public/Weapon",
+			"MyShooterGame/Public/UI"
 		});
 
 		// Uncomment if you are using Slate UI

@@ -9,6 +9,7 @@
 #include "Components/ShooterHealthComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
+#include "Components/ShooterWeaponComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter(const FObjectInitializer& ObjInit) : 
@@ -22,9 +23,11 @@ AShooterCharacter::AShooterCharacter(const FObjectInitializer& ObjInit) :
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	SpringArmComponent->bUsePawnControlRotation = true;
+	SpringArmComponent->SocketOffset = FVector(0.0f, 80.0f, 80.f);
 	ShooterHealthComponent = CreateDefaultSubobject<UShooterHealthComponent>("ShooterHealthComponent");
 	HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
 	HealthTextComponent->SetupAttachment(GetRootComponent());
+	WeaponComponent = CreateDefaultSubobject<UShooterWeaponComponent>("WeaponComponent");
 }
 
 // Called when the game starts or when spawned
@@ -57,6 +60,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AShooterCharacter::Jump);
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AShooterCharacter::OnStartRun);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AShooterCharacter::OnStopRun);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &UShooterWeaponComponent::Fire);
 }
 
 bool AShooterCharacter::IsRunning() const
@@ -135,3 +139,4 @@ void AShooterCharacter::OnGroundLanded(const FHitResult& Hit)
 	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
 	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
 }
+

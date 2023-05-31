@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UShooterHealthComponent;
 class UTextRenderComponent;
+class UShooterWeaponComponent;
 
 UCLASS()
 class MYSHOOTERGAME_API AShooterCharacter : public ACharacter
@@ -28,11 +29,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		USpringArmComponent* SpringArmComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		UShooterHealthComponent* ShooterHealthComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		UTextRenderComponent* HealthTextComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+		UShooterWeaponComponent* WeaponComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 		UAnimMontage* DeathAnimMontage;
@@ -45,6 +49,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 		FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
+
+
 
 public:	
 	virtual void Tick(float DeltaTime) override;
