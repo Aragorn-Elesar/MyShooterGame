@@ -8,6 +8,7 @@
 #include "Components/ShooteCharacterMovementComponent.h"
 #include "Components/ShooterHealthComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "GameFramework/Controller.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter(const FObjectInitializer& ObjInit) : 
@@ -34,6 +35,8 @@ void AShooterCharacter::BeginPlay()
 	OnHealthChanged(ShooterHealthComponent->GetHealth());
 	ShooterHealthComponent->OnDeath.AddUObject(this, &AShooterCharacter::OnDeath);
 	ShooterHealthComponent->OnHealthChanged.AddUObject(this, &AShooterCharacter::OnHealthChanged);
+	
+	LandedDelegate.AddDynamic(this, &AShooterCharacter::OnGroundLanded);
 }
 
 // Called every frame
@@ -109,7 +112,12 @@ void AShooterCharacter::OnDeath()
 
 	GetCharacterMovement()->DisableMovement();
 
-	SetLifeSpan(5.0f);
+	SetLifeSpan(LifeSpawnOnDeath);
+
+	if (Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
 }
 
 void AShooterCharacter::OnHealthChanged(float Health)
@@ -117,5 +125,13 @@ void AShooterCharacter::OnHealthChanged(float Health)
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
-
-
+void AShooterCharacter::OnGroundLanded(const FHitResult& Hit)
+{
+	const auto FallVelocityZ = -GetVelocity().Z;
+	if (FallVelocityZ < LandedDamageVelocity.X)
+	{
+		return;
+	}
+	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
+	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+}
