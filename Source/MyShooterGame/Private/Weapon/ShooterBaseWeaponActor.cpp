@@ -29,9 +29,13 @@ void AShooterBaseWeaponActor::Tick(float DeltaTime)
 }
 
 
-void AShooterBaseWeaponActor::Fire()
+void AShooterBaseWeaponActor::StartFire()
 {
-	MakeShot();
+
+}
+
+void AShooterBaseWeaponActor::StopFire()
+{
 }
 
 void AShooterBaseWeaponActor::MakeShot()

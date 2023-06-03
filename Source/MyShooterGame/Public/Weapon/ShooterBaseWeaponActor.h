@@ -16,7 +16,8 @@ class MYSHOOTERGAME_API AShooterBaseWeaponActor : public AActor
 public:	
 	AShooterBaseWeaponActor();
 
-	virtual void Fire();
+	virtual void StartFire();
+	virtual void StopFire();
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,7 +26,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		USkeletalMeshComponent* WeaponMeshComponent;
 
-	void MakeShot();
+	virtual void MakeShot();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FName MuzzleSoketName = "MuzzleSocket";
@@ -38,16 +39,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float DamageAmount = 10.0f;
 
+
+
 	APlayerController* GetPlayerController() const;
 
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 
 	FVector GetMuzzleWorldLocation() const;
 
-	bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
+	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 
 	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd);
+
 public:	
 	virtual void Tick(float DeltaTime) override;
+
 
 };
