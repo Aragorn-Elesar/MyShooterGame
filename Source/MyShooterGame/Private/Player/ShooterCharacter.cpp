@@ -10,6 +10,8 @@
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
 #include "Components/ShooterWeaponComponent.h"
+#include "Components/CapsuleComponent.h"
+
 
 // Sets default values
 AShooterCharacter::AShooterCharacter(const FObjectInitializer& ObjInit) : 
@@ -122,6 +124,7 @@ void AShooterCharacter::OnDeath()
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 }
 
 void AShooterCharacter::OnHealthChanged(float Health)

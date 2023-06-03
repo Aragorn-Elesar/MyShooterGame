@@ -46,6 +46,7 @@ void UShooterWeaponComponent::SpawnWeapon()
 	
 	FAttachmentTransformRules AttachmentRulls(EAttachmentRule::SnapToTarget, false);
 	CurrentWeapon->AttachToComponent(Character->GetMesh(), AttachmentRulls, WeaponAttachPointName);
+	CurrentWeapon->SetOwner(Character);
 }
 
 void UShooterWeaponComponent::Fire()
