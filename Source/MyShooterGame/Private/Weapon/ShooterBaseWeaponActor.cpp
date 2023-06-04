@@ -56,7 +56,6 @@ void AShooterBaseWeaponActor::MakeShot()
 
 	if (HitResult.bBlockingHit)
 	{
-		MakeDamage(HitResult);
 		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
 	}
@@ -119,14 +118,4 @@ void AShooterBaseWeaponActor::MakeHit(FHitResult& HitResult ,FVector& TraceStart
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
 
-}
-
-void AShooterBaseWeaponActor::MakeDamage(const FHitResult& HitResult)
-{
-	const auto DamageActor = HitResult.GetActor();
-	if (!DamageActor)
-	{
-		return;
-	}
-	DamageActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), false);
 }

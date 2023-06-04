@@ -60,3 +60,13 @@ bool AShooterRifleWeaponActor::GetTraceData(FVector& TraceStart, FVector& TraceE
 	TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 	return true;
 }
+
+void AShooterRifleWeaponActor::MakeDamage(const FHitResult& HitResult)
+{
+	const auto DamageActor = HitResult.GetActor();
+	if (!DamageActor)
+	{
+		return;
+	}
+	DamageActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), false);
+}

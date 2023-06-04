@@ -28,18 +28,11 @@ protected:
 
 	virtual void MakeShot();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		FName MuzzleSoketName = "MuzzleSocket";
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		float TraceMaxDistance = 1500.f;
-
-	void MakeDamage(const FHitResult& HitResult);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		float DamageAmount = 10.0f;
-
-
 
 	APlayerController* GetPlayerController() const;
 
