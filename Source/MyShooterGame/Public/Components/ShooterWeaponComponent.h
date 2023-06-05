@@ -19,15 +19,24 @@ public:
 
 	void StartFire();
 	void StopFire();
+	void NextWeapon();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-		TSubclassOf<AShooterBaseWeaponActor> WeaponClass;
+	 TArray<TSubclassOf<AShooterBaseWeaponActor>> WeaponClasses;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-		FName WeaponAttachPointName = "WeaponSoket";
+		FName WeaponEquipSoketName = "WeaponSoket";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+		FName WeaponArmorySoketName = "ArmorySocket";
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+		UAnimMontage* EquipAnimMontage;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -35,5 +44,23 @@ public:
 private:
 	UPROPERTY()
 		AShooterBaseWeaponActor* CurrentWeapon = nullptr;
-	void SpawnWeapon();
+
+	UPROPERTY()
+		TArray<AShooterBaseWeaponActor*> Weapons;
+
+	int64 CurrentWeaponIndex = 0;
+
+	void SpawnWeapons();
+
+	void AttachWeaponToSoket(AShooterBaseWeaponActor* Weapon, USceneComponent* SceneComponent,
+		const FName& SoketName);
+
+	void EquipWeapon(int64 WeaponIndex);
+
+	void PlayAnimMontage(UAnimMontage* Animation);
+
+	void InitAnimation();
+
+	void OnEquipFinished();
+
 };

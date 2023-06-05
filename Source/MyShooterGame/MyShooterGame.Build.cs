@@ -18,8 +18,9 @@ public class MyShooterGame : ModuleRules
 			"MyShooterGame/Public/Components",
 			"MyShooterGame/Public/Dev",
 			"MyShooterGame/Public/Weapon",
-			"MyShooterGame/Public/UI"
-		});
+			"MyShooterGame/Public/UI",
+            "MyShooterGame/Public/Animations"
+        });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

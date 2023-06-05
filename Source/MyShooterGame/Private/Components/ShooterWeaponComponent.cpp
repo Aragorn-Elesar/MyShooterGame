@@ -16,7 +16,21 @@ void UShooterWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnWeapon();
+	SpawnWeapons();
+	EquipWeapon(CurrentWeaponIndex);
+}
+
+void UShooterWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason) 
+{
+	CurrentWeapon = nullptr;
+	for (auto Weapon : Weapons)
+	{
+		Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		Weapon->Destroy();
+	}
+	Weapons.Empty();
+
+	Super::EndPlay(EndPlayReason);
 }
 
 
@@ -26,27 +40,36 @@ void UShooterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 }
 
-void UShooterWeaponComponent::SpawnWeapon()
+void UShooterWeaponComponent::SpawnWeapons()
 {
-	if (!GetWorld())
-	{
-		return;
-	}
+
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
-	if (!Character)
+	if (!Character || !GetWorld())
 	{
 		return;
 	}
 
-	CurrentWeapon = GetWorld()->SpawnActor<AShooterBaseWeaponActor>(WeaponClass);
+	for (auto WeaponClass : WeaponClasses)
+	{	
+		auto Weapon = GetWorld()->SpawnActor<AShooterBaseWeaponActor>(WeaponClass);
+		if (!Weapon)
+		{
+			continue;
+		}
+		Weapon->SetOwner(Character);
+		Weapons.Add(Weapon);
+
+		AttachWeaponToSoket(Weapon, Character->GetMesh(), WeaponArmorySoketName);
+
+	}
+
 	if (!CurrentWeapon)
 	{
 		return;
 	}
 	
-	FAttachmentTransformRules AttachmentRulls(EAttachmentRule::SnapToTarget, false);
-	CurrentWeapon->AttachToComponent(Character->GetMesh(), AttachmentRulls, WeaponAttachPointName);
-	CurrentWeapon->SetOwner(Character);
+	
+	
 }
 
 void UShooterWeaponComponent::StartFire()
@@ -65,4 +88,61 @@ void UShooterWeaponComponent::StopFire()
 		return;
 	}
 	CurrentWeapon->StopFire();
+}
+
+
+
+void UShooterWeaponComponent::AttachWeaponToSoket(AShooterBaseWeaponActor* Weapon, USceneComponent* SceneComponent,
+	const FName& SoketName)
+{
+	if (!Weapon || !SceneComponent)
+	{
+		return;
+	}
+	FAttachmentTransformRules AttachmentRulls(EAttachmentRule::SnapToTarget, false);
+	Weapon->AttachToComponent(SceneComponent, AttachmentRulls, SoketName);
+}
+
+void UShooterWeaponComponent::EquipWeapon(int64 WeaponIndex)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character)
+	{
+		return;
+	}
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
+		AttachWeaponToSoket(CurrentWeapon, Character->GetMesh(), WeaponArmorySoketName);
+	}
+
+	CurrentWeapon = Weapons[WeaponIndex];
+	AttachWeaponToSoket(CurrentWeapon, Character->GetMesh(), WeaponEquipSoketName);
+	PlayAnimMontage(EquipAnimMontage);
+}
+
+
+void UShooterWeaponComponent::NextWeapon()
+{
+	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
+	EquipWeapon(CurrentWeaponIndex);
+}
+
+void UShooterWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character)
+	{
+		return;
+	}
+
+	Character->PlayAnimMontage(Animation);
+}
+
+void UShooterWeaponComponent::InitAnimation()
+{
+}
+
+void UShooterWeaponComponent::OnEquipFinished()
+{
 }
