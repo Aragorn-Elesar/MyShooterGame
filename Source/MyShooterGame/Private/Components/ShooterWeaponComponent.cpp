@@ -4,6 +4,9 @@
 #include "Components/ShooterWeaponComponent.h"
 #include "Weapon/ShooterBaseWeaponActor.h"
 #include "GameFramework/Character.h"
+#include "Animations/ShooterEquipFinishedAnimNotify.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogWeaponStatic, All, All);
 
 UShooterWeaponComponent::UShooterWeaponComponent()
 {
@@ -16,6 +19,8 @@ void UShooterWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CurrentWeaponIndex = 0;
+	InitAnimation();
 	SpawnWeapons();
 	EquipWeapon(CurrentWeaponIndex);
 }
@@ -66,10 +71,7 @@ void UShooterWeaponComponent::SpawnWeapons()
 	if (!CurrentWeapon)
 	{
 		return;
-	}
-	
-	
-	
+	}	
 }
 
 void UShooterWeaponComponent::StartFire()
@@ -141,8 +143,33 @@ void UShooterWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void UShooterWeaponComponent::InitAnimation()
 {
+	if (!EquipAnimMontage)
+	{
+		return;
+	}
+	const auto NotifyEvents = EquipAnimMontage->Notifies;
+
+	for (auto NotifyEvent : NotifyEvents)
+	{
+		auto EquipFinishedNotify = Cast<UShooterEquipFinishedAnimNotify>(NotifyEvent.Notify);
+		if (EquipFinishedNotify)
+		{
+			EquipFinishedNotify->OnNotifySignature.AddUObject(this, &UShooterWeaponComponent::OnEquipFinished);
+			break;
+		}
+	}
 }
 
-void UShooterWeaponComponent::OnEquipFinished()
+void UShooterWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComp)
 {
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character)
+	{
+		return;
+	}
+
+	if (Character->GetMesh() == MeshComp)
+	{
+		UE_LOG(LogWeaponStatic, Display, TEXT("Finished"));
+	}
 }

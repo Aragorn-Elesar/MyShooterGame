@@ -61,6 +61,6 @@ private:
 
 	void InitAnimation();
 
-	void OnEquipFinished();
+	void OnEquipFinished(USkeletalMeshComponent* MeshComp);
 
 };
