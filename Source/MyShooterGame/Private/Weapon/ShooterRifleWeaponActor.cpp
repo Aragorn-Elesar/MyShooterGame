@@ -8,9 +8,8 @@
 
 void AShooterRifleWeaponActor::StartFire()
 {
-	MakeShot();
 	GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &AShooterRifleWeaponActor::MakeShot, TimeBetweenShot, true);
-
+	MakeShot();
 }
 
 void AShooterRifleWeaponActor::StopFire()
@@ -20,7 +19,7 @@ void AShooterRifleWeaponActor::StopFire()
 
 void AShooterRifleWeaponActor::MakeShot()
 {
-	if (!GetWorld())
+	if (!GetWorld() || IsAmmoEmpty())
 	{
 		return;
 	}
@@ -44,6 +43,8 @@ void AShooterRifleWeaponActor::MakeShot()
 	{
 		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
 	}
+
+	DecreaseAmmo();
 }
 
 bool AShooterRifleWeaponActor::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const

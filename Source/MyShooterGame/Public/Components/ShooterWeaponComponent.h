@@ -8,6 +8,21 @@
 
 class AShooterBaseWeaponActor;
 
+
+
+USTRUCT(BlueprintType)
+struct FWeaponData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+		TSubclassOf<AShooterBaseWeaponActor> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+		UAnimMontage* ReloadAnimMontage;
+};
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MYSHOOTERGAME_API UShooterWeaponComponent : public UActorComponent
 {
@@ -20,13 +35,14 @@ public:
 	void StartFire();
 	void StopFire();
 	void NextWeapon();
+	void Reload();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	 TArray<TSubclassOf<AShooterBaseWeaponActor>> WeaponClasses;
+	 TArray<FWeaponData> WeaponData;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 		FName WeaponEquipSoketName = "WeaponSoket";
@@ -48,7 +64,13 @@ private:
 	UPROPERTY()
 		TArray<AShooterBaseWeaponActor*> Weapons;
 
+	UPROPERTY()
+		UAnimMontage* CurrentreloadAnimMontage = nullptr;
+
 	int64 CurrentWeaponIndex = 0;
+
+	bool EquipAnimInProgress = false;
+	bool ReloadAnimInProgress = false;
 
 	void SpawnWeapons();
 
@@ -62,5 +84,32 @@ private:
 	void InitAnimation();
 
 	void OnEquipFinished(USkeletalMeshComponent* MeshComp);
+	void OnReloadFinished(USkeletalMeshComponent* MeshComp);
 
+	bool CanFire() const;
+	bool CanEquip() const;
+	bool CanReload() const;
+
+	void OnEmptyClip();
+	void ChangeClip();
+
+	template<typename T>
+	T* FindNotifybyClass(UAnimSequenceBase* Animation)
+	{
+		if (!Animation)
+		{
+			return nullptr;
+		}
+		const auto NotifyEvents = Animation->Notifies;
+
+		for (auto NotifyEvent : NotifyEvents)
+		{
+			auto AnimNotify = Cast<T>(NotifyEvent.Notify);
+			if (AnimNotify)
+			{
+				return AnimNotify;
+			}
+		}
+		return nullptr;
+	}
 };

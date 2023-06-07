@@ -8,6 +8,9 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 
+
+DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
+
 AShooterBaseWeaponActor::AShooterBaseWeaponActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -19,6 +22,7 @@ AShooterBaseWeaponActor::AShooterBaseWeaponActor()
 void AShooterBaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentAmmo = DefaultAmmo;
 	
 }
 
@@ -27,7 +31,6 @@ void AShooterBaseWeaponActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
 
 void AShooterBaseWeaponActor::StartFire()
 {
@@ -40,29 +43,7 @@ void AShooterBaseWeaponActor::StopFire()
 
 void AShooterBaseWeaponActor::MakeShot()
 {
-	if (!GetWorld())
-	{
-		return;
-	}
 
-	FVector TraceStart, TraceEnd;
-	if (!GetTraceData(TraceStart, TraceEnd))
-	{
-		return;
-	}
-
-	FHitResult HitResult;
-	MakeHit(HitResult, TraceStart, TraceEnd);
-
-	if (HitResult.bBlockingHit)
-	{
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
-	}
-	else
-	{
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
-	}
 }
 
 
@@ -118,4 +99,58 @@ void AShooterBaseWeaponActor::MakeHit(FHitResult& HitResult ,FVector& TraceStart
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
 
+}
+
+void AShooterBaseWeaponActor::DecreaseAmmo()
+{
+	if (CurrentAmmo.Bullets == 0)
+	{
+		UE_LOG(LogBaseWeapon, Display, TEXT("fgdgdfgdf"));
+		return;
+	}
+	CurrentAmmo.Bullets--;
+	LogAmmo();
+
+	if (IsClipEmpty() && !IsAmmoEmpty())
+	{
+		StopFire();
+		OnClipEmpty.Broadcast();
+	}
+}
+
+bool AShooterBaseWeaponActor::IsAmmoEmpty() const
+{
+	return !CurrentAmmo.Infinite &&  CurrentAmmo.Clips == 0 && IsClipEmpty();
+}
+
+bool AShooterBaseWeaponActor::IsClipEmpty() const
+{
+	return CurrentAmmo.Bullets == 0;
+}
+
+void AShooterBaseWeaponActor::ChangeClip()
+{
+	if (!CurrentAmmo.Infinite)
+	{
+		if (CurrentAmmo.Clips == 0)
+		{
+			UE_LOG(LogBaseWeapon, Display, TEXT("No more clips")); 
+			return;
+		}
+		CurrentAmmo.Clips--;
+	}
+	CurrentAmmo.Bullets = DefaultAmmo.Bullets;
+	UE_LOG(LogBaseWeapon, Display, TEXT("-------------Clips Changed-----------------"));
+}
+
+bool AShooterBaseWeaponActor::CanReload() const
+{
+	return CurrentAmmo.Bullets < DefaultAmmo.Bullets && CurrentAmmo.Clips;
+}
+
+void AShooterBaseWeaponActor::LogAmmo()
+{
+	FString AmmoInfo = "Ammo : " + FString::FromInt(CurrentAmmo.Bullets) + "/";
+	AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
+	UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
 }

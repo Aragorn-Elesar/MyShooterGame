@@ -6,7 +6,25 @@
 #include "GameFramework/Actor.h"
 #include "ShooterBaseWeaponActor.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature);
+
 class USkeletalMeshComponent;
+
+USTRUCT(BlueprintType)
+struct FAmmoData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+		int64 Bullets;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (EditCondition = "!Infinite"))
+		int64 Clips;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+		bool Infinite;
+};
+
 
 UCLASS()
 class MYSHOOTERGAME_API AShooterBaseWeaponActor : public AActor
@@ -18,6 +36,9 @@ public:
 
 	virtual void StartFire();
 	virtual void StopFire();
+	FOnClipEmptySignature OnClipEmpty;
+	void ChangeClip();
+	bool CanReload() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,11 +49,14 @@ protected:
 
 	virtual void MakeShot();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 		FName MuzzleSoketName = "MuzzleSocket";
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 		float TraceMaxDistance = 1500.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+		FAmmoData DefaultAmmo {15, 10, false};
 
 	APlayerController* GetPlayerController() const;
 
@@ -43,9 +67,16 @@ protected:
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
 
 	void MakeHit(FHitResult& HitResult, FVector& TraceStart, FVector& TraceEnd);
+	
+	void DecreaseAmmo();
+	bool IsAmmoEmpty() const;
+	bool IsClipEmpty() const;
+	void LogAmmo();
 
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+private:
+	FAmmoData CurrentAmmo;
 
 };

@@ -5,6 +5,7 @@
 #include "Weapon/ShooterBaseWeaponActor.h"
 #include "GameFramework/Character.h"
 #include "Animations/ShooterEquipFinishedAnimNotify.h"
+#include "Animations/ShooterReloadFinishedAnimNotify.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponStatic, All, All);
 
@@ -54,13 +55,14 @@ void UShooterWeaponComponent::SpawnWeapons()
 		return;
 	}
 
-	for (auto WeaponClass : WeaponClasses)
+	for (auto OneWeaponData : WeaponData)
 	{	
-		auto Weapon = GetWorld()->SpawnActor<AShooterBaseWeaponActor>(WeaponClass);
+		auto Weapon = GetWorld()->SpawnActor<AShooterBaseWeaponActor>(OneWeaponData.WeaponClass);
 		if (!Weapon)
 		{
 			continue;
 		}
+		Weapon->OnClipEmpty.AddUObject(this, &UShooterWeaponComponent::OnEmptyClip);
 		Weapon->SetOwner(Character);
 		Weapons.Add(Weapon);
 
@@ -76,7 +78,7 @@ void UShooterWeaponComponent::SpawnWeapons()
 
 void UShooterWeaponComponent::StartFire()
 {
-	if (!CurrentWeapon)
+	if (!CanFire())
 	{
 		return;
 	}
@@ -107,6 +109,11 @@ void UShooterWeaponComponent::AttachWeaponToSoket(AShooterBaseWeaponActor* Weapo
 
 void UShooterWeaponComponent::EquipWeapon(int64 WeaponIndex)
 {
+	if (WeaponIndex < 0 || WeaponIndex >= Weapons.Num())
+	{
+		UE_LOG(LogWeaponStatic, Warning, TEXT("Invalid weapon index"));
+		return;
+	}
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if (!Character)
 	{
@@ -119,13 +126,22 @@ void UShooterWeaponComponent::EquipWeapon(int64 WeaponIndex)
 	}
 
 	CurrentWeapon = Weapons[WeaponIndex];
+	//CurrentreloadAnimMontage = WeaponData[WeaponIndex].ReloadAnimMontage;
+	const auto CurrentWeaponData = WeaponData.FindByPredicate([&](const FWeaponData& Data)
+		{return Data.WeaponClass == CurrentWeapon->GetClass(); });
+	CurrentreloadAnimMontage = CurrentWeaponData ? CurrentWeaponData->ReloadAnimMontage : nullptr;
 	AttachWeaponToSoket(CurrentWeapon, Character->GetMesh(), WeaponEquipSoketName);
+	EquipAnimInProgress = true;
 	PlayAnimMontage(EquipAnimMontage);
 }
 
 
 void UShooterWeaponComponent::NextWeapon()
 {
+	if (!CanEquip())
+	{
+		return;
+	}
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
 	EquipWeapon(CurrentWeaponIndex);
 }
@@ -143,20 +159,20 @@ void UShooterWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void UShooterWeaponComponent::InitAnimation()
 {
-	if (!EquipAnimMontage)
+	auto EquipFinishedNotify = FindNotifybyClass<UShooterEquipFinishedAnimNotify>(EquipAnimMontage);
+	if (EquipFinishedNotify)
 	{
-		return;
+		EquipFinishedNotify->OnNotifySignature.AddUObject(this, &UShooterWeaponComponent::OnEquipFinished);
 	}
-	const auto NotifyEvents = EquipAnimMontage->Notifies;
 
-	for (auto NotifyEvent : NotifyEvents)
+	for (auto OneWeaponData : WeaponData)
 	{
-		auto EquipFinishedNotify = Cast<UShooterEquipFinishedAnimNotify>(NotifyEvent.Notify);
-		if (EquipFinishedNotify)
+		auto ReloadFinishedNotify = FindNotifybyClass<UShooterReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+		if (!ReloadFinishedNotify)
 		{
-			EquipFinishedNotify->OnNotifySignature.AddUObject(this, &UShooterWeaponComponent::OnEquipFinished);
-			break;
+			continue;
 		}
+		ReloadFinishedNotify->OnNotifySignature.AddUObject(this, &UShooterWeaponComponent::OnReloadFinished);
 	}
 }
 
@@ -170,6 +186,57 @@ void UShooterWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComp)
 
 	if (Character->GetMesh() == MeshComp)
 	{
-		UE_LOG(LogWeaponStatic, Display, TEXT("Finished"));
+		EquipAnimInProgress = false;
 	}
+}
+
+void UShooterWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComp)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (!Character)
+	{
+		return;
+	}
+
+	if (Character->GetMesh() == MeshComp)
+	{
+		ReloadAnimInProgress = false;
+	}
+}
+
+bool UShooterWeaponComponent::CanFire() const
+{
+	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
+}
+
+bool UShooterWeaponComponent::CanEquip() const
+{
+	return !EquipAnimInProgress;
+}
+
+bool UShooterWeaponComponent::CanReload() const
+{
+	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress && CurrentWeapon->CanReload();
+}
+
+void UShooterWeaponComponent::Reload()
+{
+	ChangeClip();
+}
+
+void UShooterWeaponComponent::OnEmptyClip()
+{
+	ChangeClip();
+}
+
+void UShooterWeaponComponent::ChangeClip()
+{
+	if (!CanReload())
+	{
+		return;
+	}
+	CurrentWeapon->StopFire();
+	CurrentWeapon->ChangeClip();
+	ReloadAnimInProgress = true;
+	PlayAnimMontage(CurrentreloadAnimMontage);
 }
