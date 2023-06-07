@@ -43,7 +43,6 @@ void UShooterWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-
 void UShooterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -98,8 +97,6 @@ void UShooterWeaponComponent::StopFire()
 	CurrentWeapon->StopFire();
 }
 
-
-
 void UShooterWeaponComponent::AttachWeaponToSoket(AShooterBaseWeaponActor* Weapon, USceneComponent* SceneComponent,
 	const FName& SoketName)
 {
@@ -138,7 +135,6 @@ void UShooterWeaponComponent::EquipWeapon(int64 WeaponIndex)
 	EquipAnimInProgress = true;
 	PlayAnimMontage(EquipAnimMontage);
 }
-
 
 void UShooterWeaponComponent::NextWeapon()
 {
@@ -233,6 +229,8 @@ void UShooterWeaponComponent::Reload()
 	ChangeClip();
 }
 
+
+
 void UShooterWeaponComponent::OnEmptyClip()
 {
 	ChangeClip();
@@ -248,4 +246,24 @@ void UShooterWeaponComponent::ChangeClip()
 	CurrentWeapon->ChangeClip();
 	ReloadAnimInProgress = true;
 	PlayAnimMontage(CurrentreloadAnimMontage);
+}
+
+bool UShooterWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
+{
+	if (CurrentWeapon)
+	{
+			UIData = CurrentWeapon->GetUIData();
+			return true;
+	}
+	return false;
+}
+
+bool UShooterWeaponComponent::GetWeaponAmmoData(FAmmoData& AmmoData) const
+{
+	if (CurrentWeapon)
+	{
+		AmmoData = CurrentWeapon->GetAmmoData();
+		return true;
+	}
+	return false;
 }

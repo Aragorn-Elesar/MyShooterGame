@@ -17,6 +17,20 @@ public:
 	// Sets default values for this component's properties
 	UShooterHealthComponent();
 
+	float GetHealth() const { return Health; }
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+		bool IsDead() const { return FMath::IsNearlyZero(Health); }
+
+	FOnDeath OnDeath;
+	FOnHealthChanged OnHealthChanged;
+
+	UFUNCTION(BlueprintCallable, Category = "Health")
+		float GetHealthPercent() const { return Health / MaxHealth; }
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -36,17 +50,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")
 		float HealModifier = 1.0f;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	float GetHealth() const { return Health; }
-
-	UFUNCTION(BlueprintCallable)
-		bool IsDead() const { return FMath::IsNearlyZero(Health); }
-
-	FOnDeath OnDeath;
-	FOnHealthChanged OnHealthChanged;
 
 private:
 	float Health = 0.0f;

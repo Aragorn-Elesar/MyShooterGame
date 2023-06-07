@@ -24,6 +24,9 @@ public:
 	FOnClipEmptySignature OnClipEmpty;
 	void ChangeClip();
 	bool CanReload() const;
+	FWeaponUIData GetUIData() const { return UIData; }
+	FAmmoData GetAmmoData() const {return CurrentAmmo;}
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -57,6 +60,9 @@ protected:
 	bool IsAmmoEmpty() const;
 	bool IsClipEmpty() const;
 	void LogAmmo();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+		FWeaponUIData UIData;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

@@ -22,6 +22,9 @@ public:
 	void StopFire();
 	void NextWeapon();
 	void Reload();
+	bool GetWeaponUIData(FWeaponUIData& UIData) const;
+	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
