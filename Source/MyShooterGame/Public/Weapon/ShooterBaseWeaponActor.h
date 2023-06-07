@@ -4,26 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ShooterCoreTypes.h"
 #include "ShooterBaseWeaponActor.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature);
 
 class USkeletalMeshComponent;
-
-USTRUCT(BlueprintType)
-struct FAmmoData
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-		int64 Bullets;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (EditCondition = "!Infinite"))
-		int64 Clips;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-		bool Infinite;
-};
 
 
 UCLASS()

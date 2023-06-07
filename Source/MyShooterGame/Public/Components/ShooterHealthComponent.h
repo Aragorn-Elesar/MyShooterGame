@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "ShooterCoreTypes.h"
 #include "ShooterHealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MYSHOOTERGAME_API UShooterHealthComponent : public UActorComponent

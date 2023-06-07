@@ -6,8 +6,11 @@
 #include "GameFramework/Character.h"
 #include "Animations/ShooterEquipFinishedAnimNotify.h"
 #include "Animations/ShooterReloadFinishedAnimNotify.h"
+#include "Animations/AnimUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponStatic, All, All);
+
+constexpr static int64 WeaponConst = 2;
 
 UShooterWeaponComponent::UShooterWeaponComponent()
 {
@@ -15,10 +18,11 @@ UShooterWeaponComponent::UShooterWeaponComponent()
 
 }
 
-
 void UShooterWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	checkf(WeaponData.Num() == WeaponConst, TEXT("Our character can hold only 2 weapon item"), WeaponConst);
 
 	CurrentWeaponIndex = 0;
 	InitAnimation();
@@ -159,18 +163,23 @@ void UShooterWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void UShooterWeaponComponent::InitAnimation()
 {
-	auto EquipFinishedNotify = FindNotifybyClass<UShooterEquipFinishedAnimNotify>(EquipAnimMontage);
+	auto EquipFinishedNotify = AnimUtils::FindNotifybyClass<UShooterEquipFinishedAnimNotify>(EquipAnimMontage);
 	if (EquipFinishedNotify)
 	{
 		EquipFinishedNotify->OnNotifySignature.AddUObject(this, &UShooterWeaponComponent::OnEquipFinished);
 	}
-
+	else
+	{
+		UE_LOG(LogWeaponStatic, Error, TEXT("Equip anim notify is fogotten to set"));
+		checkNoEntry();
+	}
 	for (auto OneWeaponData : WeaponData)
 	{
-		auto ReloadFinishedNotify = FindNotifybyClass<UShooterReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+		auto ReloadFinishedNotify = AnimUtils::FindNotifybyClass<UShooterReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
 		if (!ReloadFinishedNotify)
 		{
-			continue;
+			UE_LOG(LogWeaponStatic, Error, TEXT("Reload anim notify is fogotten to set"));
+			checkNoEntry();
 		}
 		ReloadFinishedNotify->OnNotifySignature.AddUObject(this, &UShooterWeaponComponent::OnReloadFinished);
 	}

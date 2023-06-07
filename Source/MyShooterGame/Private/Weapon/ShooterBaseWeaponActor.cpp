@@ -22,8 +22,11 @@ AShooterBaseWeaponActor::AShooterBaseWeaponActor()
 void AShooterBaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentAmmo = DefaultAmmo;
 	
+	check(WeaponMeshComponent);
+	checkf(DefaultAmmo.Bullets > 0, TEXT("Bullets count could'nt ne less or equal zero"));
+	checkf(DefaultAmmo.Clips > 0, TEXT("Clips count could'nt ne less or equal zero"));
+	CurrentAmmo = DefaultAmmo;
 }
 
 void AShooterBaseWeaponActor::Tick(float DeltaTime)
