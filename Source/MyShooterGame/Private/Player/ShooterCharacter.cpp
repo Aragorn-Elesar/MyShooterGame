@@ -118,7 +118,7 @@ void AShooterCharacter::OnStopRun()
 
 void AShooterCharacter::OnDeath()
 {
-	PlayAnimMontage(DeathAnimMontage);
+	//PlayAnimMontage(DeathAnimMontage);
 
 	GetCharacterMovement()->DisableMovement();
 
@@ -130,6 +130,9 @@ void AShooterCharacter::OnDeath()
 	}
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	WeaponComponent->StopFire();
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void AShooterCharacter::OnHealthChanged(float Health)
