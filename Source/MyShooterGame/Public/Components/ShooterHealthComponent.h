@@ -30,6 +30,8 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	bool TryToAddHealth(float HealthAmount);
+	bool IsHealthFull()const;
 
 protected:
 	// Called when the game starts

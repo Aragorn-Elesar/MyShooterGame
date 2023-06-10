@@ -26,7 +26,7 @@ public:
 	bool CanReload() const;
 	FWeaponUIData GetUIData() const { return UIData; }
 	FAmmoData GetAmmoData() const {return CurrentAmmo;}
-
+	bool TryToAddAmmo(int64 ClipsAmount);
 
 protected:
 	virtual void BeginPlay() override;
@@ -63,6 +63,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 		FWeaponUIData UIData;
+
+	bool IsAmmoFull() const;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

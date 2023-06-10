@@ -34,6 +34,7 @@ void UShooterHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 }
 
+
 void UShooterHealthComponent::OnTakeAnydamageHandle(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	if (Damage <= 0.0f || IsDead() || !GetWorld())
@@ -57,7 +58,7 @@ void UShooterHealthComponent::HealUpdate()
 {
 	SetHealth(Health + HealModifier);
 	
-	if (FMath::IsNearlyEqual(Health, MaxHealth) && GetWorld())
+	if (IsHealthFull() && GetWorld())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
 	}
@@ -69,3 +70,17 @@ void UShooterHealthComponent::SetHealth(float NewHealth)
 	OnHealthChanged.Broadcast(Health);
 }
 
+bool UShooterHealthComponent::TryToAddHealth(float HealthAmount)
+{
+	if (IsDead() || IsHealthFull())
+	{
+		return false;
+	}
+	SetHealth(Health + HealthAmount);
+	return true;
+}
+
+bool UShooterHealthComponent::IsHealthFull() const
+{
+	return FMath::IsNearlyEqual(Health, MaxHealth);
+}

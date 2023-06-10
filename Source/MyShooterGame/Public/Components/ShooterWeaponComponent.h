@@ -24,7 +24,8 @@ public:
 	void Reload();
 	bool GetWeaponUIData(FWeaponUIData& UIData) const;
 	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
-	
+	bool TryToAddAmmo(TSubclassOf<AShooterBaseWeaponActor> WeaponType, int64 ClipsAmount);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -79,6 +80,6 @@ private:
 	bool CanEquip() const;
 	bool CanReload() const;
 
-	void OnEmptyClip();
+	void OnEmptyClip(AShooterBaseWeaponActor* AmmoEmptyWeapon);
 	void ChangeClip();
 };

@@ -8,7 +8,15 @@ public class MyShooterGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] 
+		{ 
+			"Core", 
+			"CoreUObject",
+			"Engine", 
+			"InputCore",
+            "Niagara",
+			"PhysicsCore"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
@@ -19,7 +27,9 @@ public class MyShooterGame : ModuleRules
 			"MyShooterGame/Public/Dev",
 			"MyShooterGame/Public/Weapon",
 			"MyShooterGame/Public/UI",
-            "MyShooterGame/Public/Animations"
+            "MyShooterGame/Public/Animations",
+            "MyShooterGame/Public/PickUPs",
+            "MyShooterGame/Public/Weapon/Components"
         });
 
 		// Uncomment if you are using Slate UI

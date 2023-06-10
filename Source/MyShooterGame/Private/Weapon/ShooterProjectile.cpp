@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Weapon/Components/ShooterWeaponFXComponent.h"
 
 // Sets default values
 AShooterProjectile::AShooterProjectile()
@@ -16,17 +17,20 @@ AShooterProjectile::AShooterProjectile()
 	CollisionComponent->InitSphereRadius(5.0f);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	CollisionComponent->bReturnMaterialOnMove = true;
 	SetRootComponent(CollisionComponent);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
 	MovementComponent->InitialSpeed = 2000.f;
 	MovementComponent->ProjectileGravityScale = 0.0f;
+
+	WeaponProjectileFXComponent = CreateDefaultSubobject<UShooterWeaponFXComponent>("WeaponProjectileFXComponent");
 }
 
 void AShooterProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	check(WeaponProjectileFXComponent);
 	MovementComponent->Velocity = ShootDirection * MovementComponent->InitialSpeed;
 	CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
 	CollisionComponent->OnComponentHit.AddDynamic(this, &AShooterProjectile::OnProjectileHit);
@@ -46,7 +50,7 @@ void AShooterProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AAct
 		UDamageType::StaticClass(), {GetOwner()}, this, GetController(), DoFullDamage);
 
 	DrawDebugSphere(GetWorld(), GetActorLocation(), RadiusDamage, 24, FColor::Red, false, 5.0f);
-
+	WeaponProjectileFXComponent->PlayImpactFX(Hit);
 	Destroy();
 
 }

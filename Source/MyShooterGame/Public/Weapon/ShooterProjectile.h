@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class UShooterWeaponFXComponent;
 
 UCLASS()
 class MYSHOOTERGAME_API AShooterProjectile : public AActor
@@ -39,6 +40,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 		float LifeSpawn = 5.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "VFX")
+		UShooterWeaponFXComponent* WeaponProjectileFXComponent;
+
 private:
 	FVector ShootDirection;
 

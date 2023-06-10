@@ -4,7 +4,20 @@
 #include "Weapon/ShooterRifleWeaponActor.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Weapon/Components/ShooterWeaponFXComponent.h"
 
+
+AShooterRifleWeaponActor::AShooterRifleWeaponActor()
+{
+	WeaponFXComponent = CreateDefaultSubobject<UShooterWeaponFXComponent>("WeaponFXComponent");
+}
+
+
+void AShooterRifleWeaponActor::BeginPlay()
+{
+	Super::BeginPlay();
+	check(WeaponFXComponent);
+}
 
 void AShooterRifleWeaponActor::StartFire()
 {
@@ -36,8 +49,9 @@ void AShooterRifleWeaponActor::MakeShot()
 	if (HitResult.bBlockingHit)
 	{
 		MakeDamage(HitResult);
-		DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
+		//DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
+		WeaponFXComponent->PlayImpactFX(HitResult);
 	}
 	else
 	{
@@ -61,6 +75,7 @@ bool AShooterRifleWeaponActor::GetTraceData(FVector& TraceStart, FVector& TraceE
 	TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 	return true;
 }
+
 
 void AShooterRifleWeaponActor::MakeDamage(const FHitResult& HitResult)
 {
