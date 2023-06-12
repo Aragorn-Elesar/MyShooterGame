@@ -6,6 +6,25 @@
 #include "Components/ShooterWeaponComponent.h"
 #include "ShooterUtiles.h"
 
+
+bool UShooterPlayerHUDWidget::Initialize()
+{
+	const auto HealthComponent = ShooterUtiles::GetShooterPlayerComponent<UShooterHealthComponent>(GetOwningPlayerPawn());
+	if (HealthComponent)
+	{
+		HealthComponent->OnHealthChanged.AddUObject(this, &UShooterPlayerHUDWidget::OnHealthChanged);
+	}
+	return Super::Initialize();
+}
+
+void UShooterPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
+{
+	if (HealthDelta < 0.0f)
+	{
+		OnTakeDamage();
+	}
+}
+
 float UShooterPlayerHUDWidget::GetHealthPerent() const
 {
 	const auto HealthComponent = ShooterUtiles::GetShooterPlayerComponent<UShooterHealthComponent>(GetOwningPlayerPawn());
@@ -52,3 +71,4 @@ bool UShooterPlayerHUDWidget::IsPlayerSpectating() const
 
 	return Controller && Controller->GetStateName() == NAME_Spectating;
 }
+

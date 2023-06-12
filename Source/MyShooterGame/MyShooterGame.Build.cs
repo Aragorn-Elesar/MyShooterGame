@@ -15,7 +15,9 @@ public class MyShooterGame : ModuleRules
 			"Engine", 
 			"InputCore",
             "Niagara",
-			"PhysicsCore"
+			"PhysicsCore",
+			"GameplayTasks",
+			"NavigationSystem"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -29,7 +31,9 @@ public class MyShooterGame : ModuleRules
 			"MyShooterGame/Public/UI",
             "MyShooterGame/Public/Animations",
             "MyShooterGame/Public/PickUPs",
-            "MyShooterGame/Public/Weapon/Components"
+            "MyShooterGame/Public/Weapon/Components",
+            "MyShooterGame/Public/AI",
+            "MyShooterGame/Public/AI/Tasks"
         });
 
 		// Uncomment if you are using Slate UI

@@ -7,6 +7,8 @@
 #include "ShooterRifleWeaponActor.generated.h"
 
 class UShooterWeaponFXComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class MYSHOOTERGAME_API AShooterRifleWeaponActor : public AShooterBaseWeaponActor
@@ -34,10 +36,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "VFX")
 		UShooterWeaponFXComponent* WeaponFXComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+		UNiagaraSystem* TraceFX;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+		FString TraceTargetName = "TraceTarget";
+
 	virtual void BeginPlay() override;
 private:
 	FTimerHandle ShotTimerHandle;
 
+	UPROPERTY()
+		UNiagaraComponent* MuzzleFXComponent;
+
 	void MakeDamage(const FHitResult& HitResult);
 
+	void InitMuzzleFX();
+	void SetMuzzleFXVisible(bool Visible);
+
+	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 };

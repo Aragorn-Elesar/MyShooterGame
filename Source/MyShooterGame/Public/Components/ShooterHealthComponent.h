@@ -7,6 +7,7 @@
 #include "ShooterCoreTypes.h"
 #include "ShooterHealthComponent.generated.h"
 
+class UCameraShakeBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MYSHOOTERGAME_API UShooterHealthComponent : public UActorComponent
@@ -53,6 +54,9 @@ protected:
 		float HealModifier = 1.0f;
 
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+		TSubclassOf<UCameraShakeBase> CameraShake;
+
 private:
 	float Health = 0.0f;
 	FTimerHandle HealTimerHandle;
@@ -63,4 +67,6 @@ private:
 		
 	void HealUpdate();
 	void SetHealth(float NewHealth);
+
+	void PlayCameraShake();
 };

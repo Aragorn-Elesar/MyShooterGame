@@ -49,7 +49,9 @@ void AShooterProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AAct
 	UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageAmount, GetActorLocation(), RadiusDamage, 
 		UDamageType::StaticClass(), {GetOwner()}, this, GetController(), DoFullDamage);
 
+	// закоментировать после добавления ефектов взрыва 
 	DrawDebugSphere(GetWorld(), GetActorLocation(), RadiusDamage, 24, FColor::Red, false, 5.0f);
+
 	WeaponProjectileFXComponent->PlayImpactFX(Hit);
 	Destroy();
 

@@ -45,7 +45,7 @@ struct FWeaponUIData
 		UTexture2D* CrosshairIcon;
 };
 
-
+// VFX
 USTRUCT(BlueprintType)
 struct FDecalData
 {
@@ -79,7 +79,6 @@ struct FImpactData
 };
 
 
-
 //Health 
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);

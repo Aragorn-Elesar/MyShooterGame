@@ -7,7 +7,8 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
-
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
@@ -193,4 +194,10 @@ bool AShooterBaseWeaponActor::TryToAddAmmo(int64 ClipsAmount)
 		CurrentAmmo.Bullets = DefaultAmmo.Bullets;
 	}
 	return true;
+}
+
+UNiagaraComponent* AShooterBaseWeaponActor::SpawnMuzzleFX()
+{
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX, WeaponMeshComponent, MuzzleSoketName,
+		FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true);
 }

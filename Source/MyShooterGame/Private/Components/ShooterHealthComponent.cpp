@@ -3,8 +3,11 @@
 
 #include "Components/ShooterHealthComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "Camera/CameraShakeBase.h"
 
 UShooterHealthComponent::UShooterHealthComponent()
 {
@@ -52,6 +55,7 @@ void UShooterHealthComponent::OnTakeAnydamageHandle(AActor* DamageActor, float D
 		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &UShooterHealthComponent::HealUpdate,
 			HealUpdateTime, true, HealDelay);
 	}
+	PlayCameraShake();
 }
 
 void UShooterHealthComponent::HealUpdate()
@@ -66,9 +70,13 @@ void UShooterHealthComponent::HealUpdate()
 
 void UShooterHealthComponent::SetHealth(float NewHealth)
 {
-	Health = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
-	OnHealthChanged.Broadcast(Health);
+	const auto NextHelth = FMath::Clamp(NewHealth, 0.0f, MaxHealth);
+	const auto HelthDelta = NextHelth - Health;
+
+	Health = NextHelth;
+	OnHealthChanged.Broadcast(Health, HelthDelta);
 }
+
 
 bool UShooterHealthComponent::TryToAddHealth(float HealthAmount)
 {
@@ -83,4 +91,25 @@ bool UShooterHealthComponent::TryToAddHealth(float HealthAmount)
 bool UShooterHealthComponent::IsHealthFull() const
 {
 	return FMath::IsNearlyEqual(Health, MaxHealth);
+}
+
+void UShooterHealthComponent::PlayCameraShake()
+{
+	if (IsDead())
+	{
+		return;
+	}
+
+	const auto Player = Cast<APawn>(GetOwner());
+	if (!Player)
+	{
+		return;
+	}
+
+	const auto Controller = Player->GetController<APlayerController>();
+	if (!Controller || !Controller->PlayerCameraManager)
+	{
+		return;
+	}
+	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
 }

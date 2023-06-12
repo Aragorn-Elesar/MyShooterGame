@@ -40,4 +40,5 @@ void AShooterLauncherWeaponActor::MakeShot()
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 	DecreaseAmmo();
+	SpawnMuzzleFX();
 }

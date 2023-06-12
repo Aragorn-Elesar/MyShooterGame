@@ -37,7 +37,7 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnHealthChanged(ShooterHealthComponent->GetHealth());
+	OnHealthChanged(ShooterHealthComponent->GetHealth(), 0.0f);
 	ShooterHealthComponent->OnDeath.AddUObject(this, &AShooterCharacter::OnDeath);
 	ShooterHealthComponent->OnHealthChanged.AddUObject(this, &AShooterCharacter::OnHealthChanged);
 	
@@ -135,7 +135,7 @@ void AShooterCharacter::OnDeath()
 	GetMesh()->SetSimulatePhysics(true);
 }
 
-void AShooterCharacter::OnHealthChanged(float Health)
+void AShooterCharacter::OnHealthChanged(float Health, float HealthDelta)
 {
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
