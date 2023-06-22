@@ -33,7 +33,8 @@ public class MyShooterGame : ModuleRules
             "MyShooterGame/Public/PickUPs",
             "MyShooterGame/Public/Weapon/Components",
             "MyShooterGame/Public/AI",
-            "MyShooterGame/Public/AI/Tasks"
+            "MyShooterGame/Public/AI/Tasks",
+            "MyShooterGame/Public/AI/Services"
         });
 
 		// Uncomment if you are using Slate UI

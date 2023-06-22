@@ -18,9 +18,9 @@ public:
 	// Sets default values for this component's properties
 	UShooterWeaponComponent();
 
-	void StartFire();
+	virtual void StartFire();
 	void StopFire();
-	void NextWeapon();
+	virtual void NextWeapon();
 	void Reload();
 	bool GetWeaponUIData(FWeaponUIData& UIData) const;
 	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
@@ -42,6 +42,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 		UAnimMontage* EquipAnimMontage;
+	UPROPERTY()
+		AShooterBaseWeaponActor* CurrentWeapon = nullptr;
+
+	UPROPERTY()
+		TArray<AShooterBaseWeaponActor*> Weapons;
+
+	bool CanFire() const;
+	bool CanEquip() const;
+	void EquipWeapon(int64 WeaponIndex);
+	int64 CurrentWeaponIndex = 0;
 
 public:	
 	// Called every frame
@@ -49,15 +59,8 @@ public:
 
 private:
 	UPROPERTY()
-		AShooterBaseWeaponActor* CurrentWeapon = nullptr;
-
-	UPROPERTY()
-		TArray<AShooterBaseWeaponActor*> Weapons;
-
-	UPROPERTY()
 		UAnimMontage* CurrentreloadAnimMontage = nullptr;
 
-	int64 CurrentWeaponIndex = 0;
 
 	bool EquipAnimInProgress = false;
 	bool ReloadAnimInProgress = false;
@@ -67,7 +70,7 @@ private:
 	void AttachWeaponToSoket(AShooterBaseWeaponActor* Weapon, USceneComponent* SceneComponent,
 		const FName& SoketName);
 
-	void EquipWeapon(int64 WeaponIndex);
+	
 
 	void PlayAnimMontage(UAnimMontage* Animation);
 
@@ -76,8 +79,6 @@ private:
 	void OnEquipFinished(USkeletalMeshComponent* MeshComp);
 	void OnReloadFinished(USkeletalMeshComponent* MeshComp);
 
-	bool CanFire() const;
-	bool CanEquip() const;
 	bool CanReload() const;
 
 	void OnEmptyClip(AShooterBaseWeaponActor* AmmoEmptyWeapon);

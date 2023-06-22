@@ -4,8 +4,10 @@
 #include "AI/ShooterAICharacter.h"
 #include "AI/ShooterAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/ShooterAIWeaponComponent.h"
 
-AShooterAICharacter::AShooterAICharacter(const FObjectInitializer& ObjInit):Super(ObjInit)
+AShooterAICharacter::AShooterAICharacter(const FObjectInitializer& ObjInit)
+	:Super(ObjInit.SetDefaultSubobjectClass<UShooterAIWeaponComponent>("WeaponComponent"))
 {
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AShooterAIController::StaticClass();

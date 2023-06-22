@@ -3,6 +3,15 @@
 
 #include "AI/ShooterAIController.h"
 #include "AI/ShooterAICharacter.h"
+#include "Components/ShooterAIPerceptionComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
+
+AShooterAIController::AShooterAIController()
+{
+	ShooterAIPerceptionComponent = CreateDefaultSubobject<UShooterAIPerceptionComponent>("ShooterAIPerceptionComponent");
+	SetPerceptionComponent(*ShooterAIPerceptionComponent);
+}
 
 void AShooterAIController::OnPossess(APawn* InPawn)
 {
@@ -14,5 +23,21 @@ void AShooterAIController::OnPossess(APawn* InPawn)
 	{
 		RunBehaviorTree(ShooterCharacter->BehaivorTreeAsset);
 	}
+}
+
+void AShooterAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	const auto AimActor = GetFocusOnActor();
+	SetFocus(AimActor);
+}
+
+AActor* AShooterAIController::GetFocusOnActor() const
+{
+	if (!GetBlackboardComponent())
+	{
+		return nullptr;
+	}
+	return Cast<AActor>(GetBlackboardComponent()->GetValueAsObject(FocusOnKeyName));
 }
 
