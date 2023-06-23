@@ -50,7 +50,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 		FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
 
-
+	virtual void OnDeath();
 
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -71,7 +71,6 @@ private:
 	bool IsMovingForward = false;
 	void OnStartRun();
 	void OnStopRun();
-	void OnDeath();
 	void OnHealthChanged(float Health, float HealthDelta);
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);

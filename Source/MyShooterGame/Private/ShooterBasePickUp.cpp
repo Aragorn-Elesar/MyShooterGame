@@ -5,7 +5,6 @@
 #include "Components/SphereComponent.h"
 
 
-DEFINE_LOG_CATEGORY_STATIC(LogPickUp, All, All);
 
 AShooterBasePickUp::AShooterBasePickUp()
 {
@@ -18,6 +17,7 @@ AShooterBasePickUp::AShooterBasePickUp()
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	SetRootComponent(CollisionComponent);
 }
+
 
 void AShooterBasePickUp::BeginPlay()
 {
@@ -57,7 +57,7 @@ void AShooterBasePickUp::PickUpWasTaken()
 		GetRootComponent()->SetVisibility(false, true);
 	}
 	
-	FTimerHandle RespawnTimer;
+	
 	GetWorldTimerManager().SetTimer(RespawnTimer, this, &AShooterBasePickUp::Respawn, RespawnTime);
 }
 
@@ -75,4 +75,9 @@ void AShooterBasePickUp::GenerateRotationYaw()
 {
 	const auto Direction = FMath::RandBool() ? 1.0f : -1.0f;
 	RotationYaw = FMath::RandRange(1.0f, 2.0f) * Direction;
+}
+
+bool AShooterBasePickUp::CouldBeTaken() const
+{
+	return !GetWorldTimerManager().IsTimerActive(RespawnTimer);
 }

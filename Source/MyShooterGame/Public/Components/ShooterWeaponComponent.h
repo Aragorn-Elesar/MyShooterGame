@@ -25,6 +25,7 @@ public:
 	bool GetWeaponUIData(FWeaponUIData& UIData) const;
 	bool GetWeaponAmmoData(FAmmoData& AmmoData) const;
 	bool TryToAddAmmo(TSubclassOf<AShooterBaseWeaponActor> WeaponType, int64 ClipsAmount);
+	bool NeedAmmo(TSubclassOf<AShooterBaseWeaponActor> WeaponType);
 
 protected:
 	// Called when the game starts

@@ -5,6 +5,7 @@
 #include "AI/ShooterAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/ShooterAIWeaponComponent.h"
+#include "BrainComponent.h"
 
 AShooterAICharacter::AShooterAICharacter(const FObjectInitializer& ObjInit)
 	:Super(ObjInit.SetDefaultSubobjectClass<UShooterAIWeaponComponent>("WeaponComponent"))
@@ -17,5 +18,16 @@ AShooterAICharacter::AShooterAICharacter(const FObjectInitializer& ObjInit)
 	{
 		GetCharacterMovement()->bUseControllerDesiredRotation = true;
 		GetCharacterMovement()->RotationRate = FRotator(0.0f, 200.0f, 0.0f);
+	}
+}
+
+void AShooterAICharacter::OnDeath()
+{
+	Super::OnDeath();
+
+	const auto ShooterController = Cast<AAIController>(Controller);
+	if (ShooterController && ShooterController->BrainComponent)
+	{
+		ShooterController->BrainComponent->Cleanup();
 	}
 }

@@ -30,6 +30,7 @@ public:
 	FAmmoData GetAmmoData() const {return CurrentAmmo;}
 	bool TryToAddAmmo(int64 ClipsAmount);
 	bool IsAmmoEmpty() const;
+	bool IsAmmoFull() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -71,7 +72,7 @@ protected:
 
 	UNiagaraComponent* SpawnMuzzleFX();
 
-	bool IsAmmoFull() const;
+
 
 public:	
 	virtual void Tick(float DeltaTime) override;

@@ -15,7 +15,7 @@ class MYSHOOTERGAME_API AShooterBasePickUp : public AActor
 	
 public:	
 	AShooterBasePickUp();
-
+	bool CouldBeTaken() const;
 protected:
 	virtual void BeginPlay() override;
 
@@ -35,4 +35,5 @@ private:
 	virtual bool GivePickUpTrue(APawn* PlayerPawn);
 	void PickUpWasTaken();
 	void Respawn();
+	FTimerHandle RespawnTimer;
 };
