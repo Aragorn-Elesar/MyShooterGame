@@ -229,8 +229,6 @@ void UShooterWeaponComponent::Reload()
 	ChangeClip();
 }
 
-
-
 void UShooterWeaponComponent::OnEmptyClip(AShooterBaseWeaponActor* AmmoEmptyWeapon)
 {
 	if (!AmmoEmptyWeapon)

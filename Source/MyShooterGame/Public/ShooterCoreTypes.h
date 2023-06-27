@@ -82,3 +82,15 @@ struct FImpactData
 //Health 
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);
+
+
+
+USTRUCT(BlueprintType)
+struct FGameData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "100"))
+		int64 PlayersNum = 2;
+
+};
