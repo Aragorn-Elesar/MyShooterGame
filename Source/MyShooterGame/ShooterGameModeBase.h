@@ -19,6 +19,15 @@ public:
 
 	virtual void StartPlay() override; 
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
+	void Killed(AController* KillerController, AController* VictimController);
+
+	FGameData GetGameData() const { return GameData; }
+	int64 GetCurrentRoundsNum() const { return CurrentRound; }
+	int64 GetCurrentRoundTimeNum() const { return RoundCountDown; }
+
+	void RespawnRequest(AController* Controller);
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Game")
@@ -32,4 +41,20 @@ protected:
 
 private:
 	void SpawnBot();
+	FTimerHandle GameRoundTimerHandle;
+	int64 CurrentRound = 1;
+	int64 RoundCountDown = 0;
+
+	void StartRound();
+	void GameTimerUpdate();
+
+	void ResetPlayers();
+	void ResetOnePlayer(AController* Controller);
+
+	void CreateTeamsInfo();
+	FLinearColor DetermineColorByTeamID(int64 Id) const;
+	void SetPlayerCollor(AController* Controller);
+
+	void LogPlayerInfo();
+	void StartRespaw(AController* Controller);
 };

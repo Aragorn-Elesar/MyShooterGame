@@ -8,6 +8,7 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Camera/CameraShakeBase.h"
+#include <MyShooterGame/ShooterGameModeBase.h>
 
 UShooterHealthComponent::UShooterHealthComponent()
 {
@@ -48,6 +49,7 @@ void UShooterHealthComponent::OnTakeAnydamageHandle(AActor* DamageActor, float D
 	GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
 	if (IsDead())
 	{
+		Killed(InstigatedBy);
 		OnDeath.Broadcast();
 	}
 	else if (AutoHeal)
@@ -112,4 +114,22 @@ void UShooterHealthComponent::PlayCameraShake()
 		return;
 	}
 	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
+}
+
+void UShooterHealthComponent::Killed(AController* KillerController)
+{
+	if (!GetWorld())
+	{
+		return;
+	}
+	const auto GameMode = Cast<AShooterGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (!GameMode)
+	{
+		return;
+	}
+	const auto Player = Cast<APawn>(GetOwner());
+	const auto VictimController = Player ? Player->Controller : nullptr;
+
+	GameMode->Killed(KillerController, VictimController);
+
 }

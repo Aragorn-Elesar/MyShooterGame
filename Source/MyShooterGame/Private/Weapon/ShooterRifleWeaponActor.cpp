@@ -112,3 +112,10 @@ void AShooterRifleWeaponActor::SpawnTraceFX(const FVector& TraceStart, const FVe
 		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
 	}
 }
+
+AController* AShooterRifleWeaponActor::GetController() const
+{
+	const auto Pawn = Cast<APawn>(GetOwner());
+	return Pawn ? Pawn->GetController() : nullptr;
+}
+

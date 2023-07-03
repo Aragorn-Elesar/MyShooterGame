@@ -35,7 +35,11 @@ AActor* UShooterAIPerceptionComponent::GetClosesEnemy() const
 	for (const auto PerciveActor : PerciveActors)
 	{
 		const auto HealthComponent = ShooterUtiles::GetShooterPlayerComponent<UShooterHealthComponent>(PerciveActor);
-		if (HealthComponent && !HealthComponent->IsDead()) // and check if enemy or not
+
+		const auto PercivePawn = Cast<APawn>(PerciveActor);
+		const auto AreEnemis = PercivePawn && ShooterUtiles::AreEnemies(Controller, PercivePawn->Controller);
+
+		if (HealthComponent && !HealthComponent->IsDead() && AreEnemis) 
 		{
 			const auto CurrenDistance = (PerciveActor->GetActorLocation() - Pawn->GetActorLocation()).Size();
 			if (CurrenDistance < BestDistance)

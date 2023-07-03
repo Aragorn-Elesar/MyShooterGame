@@ -19,6 +19,7 @@ class MYSHOOTERGAME_API AShooterCharacter : public ACharacter
 
 public:
 	AShooterCharacter(const FObjectInitializer& ObjInit);
+	void SetPlayerColor(FLinearColor Color);
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,6 +51,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 		FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Material")
+		FName MaterialColorName = "Paint Color";
 	virtual void OnDeath();
 
 public:	

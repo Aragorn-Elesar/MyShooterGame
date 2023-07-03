@@ -10,7 +10,7 @@
 AShooterAICharacter::AShooterAICharacter(const FObjectInitializer& ObjInit)
 	:Super(ObjInit.SetDefaultSubobjectClass<UShooterAIWeaponComponent>("WeaponComponent"))
 {
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AutoPossessAI = EAutoPossessAI::Disabled;
 	AIControllerClass = AShooterAIController::StaticClass();
 
 	bUseControllerRotationYaw = false;
