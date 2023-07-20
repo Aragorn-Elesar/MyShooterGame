@@ -9,12 +9,22 @@
 
 bool UShooterPlayerHUDWidget::Initialize()
 {
+	if (GetOwningPlayer())
+	{
+		GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &UShooterPlayerHUDWidget::OneNewPawn);
+		OneNewPawn(GetOwningPlayerPawn());
+	}
+
+	return Super::Initialize();
+}
+
+void UShooterPlayerHUDWidget::OneNewPawn(APawn* NewPawn)
+{
 	const auto HealthComponent = ShooterUtiles::GetShooterPlayerComponent<UShooterHealthComponent>(GetOwningPlayerPawn());
 	if (HealthComponent)
 	{
 		HealthComponent->OnHealthChanged.AddUObject(this, &UShooterPlayerHUDWidget::OnHealthChanged);
 	}
-	return Super::Initialize();
 }
 
 void UShooterPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)

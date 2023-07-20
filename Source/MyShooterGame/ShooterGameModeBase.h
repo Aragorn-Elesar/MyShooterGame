@@ -57,4 +57,6 @@ private:
 
 	void LogPlayerInfo();
 	void StartRespaw(AController* Controller);
+
+	void GameOver();
 };

@@ -20,6 +20,7 @@ void UShooterRespawnComponent::Respawn(int64 RespawnTime)
 
 }
 
+
 void UShooterRespawnComponent::RespawnTimeUpdate()
 {
 	if (--RespawnTimerCountDown == 0)
@@ -38,4 +39,9 @@ void UShooterRespawnComponent::RespawnTimeUpdate()
 
 		GameMode->RespawnRequest(Cast<AController>(GetOwner()));
 	}
+}
+
+bool UShooterRespawnComponent::IsRespawnInProgress() const
+{
+	return GetWorld()->GetTimerManager().IsTimerActive(RespawnTimer);
 }

@@ -16,6 +16,8 @@ public:
 	UShooterRespawnComponent();
 
 	void Respawn(int64 RespawnTime);
+	int64 GetRespawnTimerCountDown() const { return RespawnTimerCountDown; }
+	bool IsRespawnInProgress() const;
 
 private:
 	FTimerHandle RespawnTimer;
