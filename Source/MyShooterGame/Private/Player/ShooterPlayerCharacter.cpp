@@ -6,19 +6,34 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/ShooterWeaponComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 
 AShooterPlayerCharacter::AShooterPlayerCharacter(const FObjectInitializer& ObjInit) :
 	Super(ObjInit)
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	SpringArmComponent->SetupAttachment(GetRootComponent());
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
-	CameraComponent->SetupAttachment(SpringArmComponent);
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->SocketOffset = FVector(0.0f, 80.0f, 80.f);
+
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
+	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	CameraCollisionComponent = CreateDefaultSubobject<USphereComponent>("CameraCollisionComponent");
+	CameraCollisionComponent->SetupAttachment(SpringArmComponent);
+	CameraCollisionComponent->SetSphereRadius(10.0f);
+	CameraCollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+}
+
+void AShooterPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AShooterPlayerCharacter::OnComponentBeginOverlap);
+	CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &AShooterPlayerCharacter::OnComponentEndOverlap);
 }
 
 void AShooterPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -70,6 +85,34 @@ void AShooterPlayerCharacter::OnStartRun()
 void AShooterPlayerCharacter::OnStopRun()
 {
 	WantsToRun = false;
+}
+
+void AShooterPlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ChechCameraOverlap();
+}
+
+void AShooterPlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	ChechCameraOverlap();
+}
+
+void AShooterPlayerCharacter::ChechCameraOverlap()
+{
+	const auto HideMesh = CameraCollisionComponent->IsOverlappingComponent(GetCapsuleComponent());
+	GetMesh()->SetOwnerNoSee(HideMesh);
+
+	TArray<USceneComponent*> MeshChildren;
+	GetMesh()->GetChildrenComponents(true, MeshChildren);
+
+	for (auto MeshChild : MeshChildren)
+	{
+		const auto MeshChildGeometry = Cast<UPrimitiveComponent>(MeshChild);
+		if (MeshChildGeometry)
+		{
+			MeshChildGeometry->SetOwnerNoSee(HideMesh);
+		}
+	}
 }
 
 void AShooterPlayerCharacter::OnDeath()
