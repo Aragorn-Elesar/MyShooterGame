@@ -78,12 +78,9 @@ struct FImpactData
 			FDecalData DecalData;
 };
 
-
 //Health 
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);
-
-
 
 USTRUCT(BlueprintType)
 struct FGameData
@@ -108,3 +105,14 @@ struct FGameData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "3", ClampMax = "20"))
 		int64 RespawnTime = 10; //in second
 };
+
+UENUM(BlueprintType)
+enum class ESTUMatchState : uint8
+{
+	WaitingToStart = 0,
+	InProgress,
+	Pause,
+	GameOver
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature,ESTUMatchState);

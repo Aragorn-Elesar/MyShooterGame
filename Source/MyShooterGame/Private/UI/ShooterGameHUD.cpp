@@ -4,6 +4,9 @@
 #include "UI/ShooterGameHUD.h"
 #include "Engine/Canvas.h"
 #include "Blueprint/UserWidget.h"
+#include <MyShooterGame/ShooterGameModeBase.h>
+
+DEFINE_LOG_CATEGORY_STATIC(LogMatchState, All, All);
 
 void AShooterGameHUD::DrawHUD()
 {
@@ -15,10 +18,29 @@ void AShooterGameHUD::DrawHUD()
 void AShooterGameHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	auto PlayerHUDWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass);
-	if (PlayerHUDWidget)
+
+	Game_Widgets.Add(ESTUMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass));
+	Game_Widgets.Add(ESTUMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), Pause_Widget_Class));
+
+	for (auto widget : Game_Widgets)
 	{
-		PlayerHUDWidget->AddToViewport();
+		const auto Game_Widget = widget.Value;
+		if (!Game_Widget)
+		{
+			continue;
+		}
+
+		Game_Widget->AddToViewport();
+		Game_Widget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (GetWorld())
+	{
+		const auto Game_Mode = Cast<AShooterGameModeBase>(GetWorld()->GetAuthGameMode());
+		if (Game_Mode)
+		{
+			Game_Mode->OnMatchStateChanged.AddUObject(this, &AShooterGameHUD::On_Match_State_Changed);
+		}
 	}
 }
 
@@ -31,4 +53,24 @@ void AShooterGameHUD::DrawCrossHair()
 	
 	DrawLine(Centre.Min - HalflineSize, Centre.Max, Centre.Min + HalflineSize, Centre.Max, LineColor, LineThickness);
 	DrawLine(Centre.Min , Centre.Max - HalflineSize, Centre.Min , Centre.Max + HalflineSize, LineColor, LineThickness);
+}
+
+void AShooterGameHUD::On_Match_State_Changed(ESTUMatchState State)
+{
+	if (CurrentWidget)
+	{
+		CurrentWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (Game_Widgets.Contains(State))
+	{
+		CurrentWidget = Game_Widgets[State];
+	}
+
+	if (CurrentWidget)
+	{
+		CurrentWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+
+	UE_LOG(LogMatchState, Display, TEXT("Match state changed: %s"), *UEnum::GetValueAsString(State));
 }

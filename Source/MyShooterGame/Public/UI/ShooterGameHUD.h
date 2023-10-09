@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "ShooterCoreTypes.h"
 #include "ShooterGameHUD.generated.h"
 
 /**
@@ -18,11 +19,19 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
-		TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+	TSubclassOf<UUserWidget> PlayerHUDWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> Pause_Widget_Class;
 
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY()
+	TMap<ESTUMatchState, UUserWidget*> Game_Widgets;
+
+	UPROPERTY()
+	UUserWidget *CurrentWidget = 0;
 	void DrawCrossHair();
-	
+	void On_Match_State_Changed(ESTUMatchState State);
 };

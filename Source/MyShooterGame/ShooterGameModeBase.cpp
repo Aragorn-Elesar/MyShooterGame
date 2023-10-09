@@ -31,6 +31,8 @@ void AShooterGameModeBase::StartPlay()
 	CreateTeamsInfo();
 	CurrentRound = 1;
 	StartRound();
+
+	Set_Match_State(ESTUMatchState::InProgress);
 }
 
 UClass* AShooterGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
@@ -41,8 +43,6 @@ UClass* AShooterGameModeBase::GetDefaultPawnClassForController_Implementation(AC
 	}
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
-
-
 
 void AShooterGameModeBase::SpawnBot()
 {
@@ -171,7 +171,6 @@ void AShooterGameModeBase::SetPlayerCollor(AController* Controller)
 	Character->SetPlayerColor(PlayerState->GetTeamColor());
 }
 
-
 void AShooterGameModeBase::Killed(AController* KillerController, AController* VictimController)
 {
 	const auto KillerPlayerState = KillerController ? Cast<AShooterPlayerState>(KillerController->PlayerState) : nullptr;
@@ -188,8 +187,6 @@ void AShooterGameModeBase::Killed(AController* KillerController, AController* Vi
 
 	StartRespaw(VictimController);
 }
-
-
 
 void AShooterGameModeBase::LogPlayerInfo()
 {
@@ -232,7 +229,6 @@ void AShooterGameModeBase::RespawnRequest(AController* Controller)
 	ResetOnePlayer(Controller);
 }
 
-
 void AShooterGameModeBase::GameOver()
 {
 	UE_LOG(GameStatics, Display, TEXT("-----------Game Over---------------"));
@@ -245,4 +241,36 @@ void AShooterGameModeBase::GameOver()
 			Pawn->DisableInput(nullptr);
 		}
 	}
+	Set_Match_State(ESTUMatchState::GameOver);
+}
+
+void AShooterGameModeBase::Set_Match_State(ESTUMatchState State)
+{
+	if ( Match_State == State)
+	{
+		return;
+	}
+
+	Match_State = State;
+	OnMatchStateChanged.Broadcast(Match_State);
+}
+
+bool AShooterGameModeBase::SetPause(APlayerController *PC, FCanUnpause CanUnpauseDelegate)
+{
+	const auto Pause_Set = Super::SetPause(PC, CanUnpauseDelegate);
+	if (Pause_Set)
+	{
+		Set_Match_State(ESTUMatchState::Pause);
+	}
+	return Pause_Set;
+}
+
+bool AShooterGameModeBase::ClearPause()
+{
+	const auto Pause_Cleard = Super::ClearPause();
+	if (Pause_Cleard)
+	{
+		Set_Match_State(ESTUMatchState::InProgress);
+	}
+	return Pause_Cleard;
 }
