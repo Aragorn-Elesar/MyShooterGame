@@ -135,6 +135,14 @@ void AShooterGameModeBase::CreateTeamsInfo()
 
 		PlayerState->SetTeamID(TeamID);
 		PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
+		if (Controller->IsPlayerController())
+		{
+			PlayerState->SetPlayerName("Player");
+		}
+		else
+		{
+			PlayerState->SetPlayerName("Bot");
+		}
 		SetPlayerCollor(Controller);
 
 		TeamID = TeamID == 1 ? 2 : 1;

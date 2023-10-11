@@ -17,7 +17,7 @@ class MYSHOOTERGAME_API UShooter_Pause_Widget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	virtual bool Initialize() override;
+	virtual void NativeOnInitialized() override;
 
 protected:
 	UPROPERTY(meta = (BindWidget))

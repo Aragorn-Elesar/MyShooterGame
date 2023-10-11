@@ -36,7 +36,9 @@ public class MyShooterGame : ModuleRules
             "MyShooterGame/Public/AI/Tasks",
             "MyShooterGame/Public/AI/Services",
             "MyShooterGame/Public/AI/EQS",
-            "MyShooterGame/Public/AI/Decorators"
+            "MyShooterGame/Public/AI/Decorators",
+            "MyShooterGame/Public/Menu",
+            "MyShooterGame/Public/Menu/UI"
         });
 
 		// Uncomment if you are using Slate UI

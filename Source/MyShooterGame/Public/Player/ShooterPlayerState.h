@@ -31,8 +31,7 @@ public:
 
 private:
 	int64 TeamID;
-	FLinearColor TeamColor;
-
 	int64 KillsNum = 0;
 	int64 DeathNum = 0;
+	FLinearColor TeamColor;
 };

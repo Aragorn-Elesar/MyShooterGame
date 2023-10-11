@@ -21,6 +21,7 @@ void AShooterGameHUD::BeginPlay()
 
 	Game_Widgets.Add(ESTUMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass));
 	Game_Widgets.Add(ESTUMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), Pause_Widget_Class));
+	Game_Widgets.Add(ESTUMatchState::GameOver, CreateWidget<UUserWidget>(GetWorld(), Game_Over_Widget_Class));
 
 	for (auto widget : Game_Widgets)
 	{
