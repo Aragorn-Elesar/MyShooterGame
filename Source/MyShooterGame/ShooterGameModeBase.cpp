@@ -10,6 +10,7 @@
 #include "ShooterUtiles.h"
 #include "Components/ShooterRespawnComponent.h"
 #include "EngineUtils.h"
+#include "Shooter_Game_Instance.h"
 
 DEFINE_LOG_CATEGORY_STATIC(GameStatics, All, All);
 
@@ -26,7 +27,7 @@ AShooterGameModeBase::AShooterGameModeBase()
 void AShooterGameModeBase::StartPlay()
 {
 	Super::StartPlay();
-
+	
 	SpawnBot();
 	CreateTeamsInfo();
 	CurrentRound = 1;
