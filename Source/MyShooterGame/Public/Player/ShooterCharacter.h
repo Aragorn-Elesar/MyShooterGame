@@ -16,12 +16,26 @@ class MYSHOOTERGAME_API AShooterCharacter : public ACharacter
 
 public:
 	AShooterCharacter(const FObjectInitializer& ObjInit);
+
 	void SetPlayerColor(FLinearColor Color);
+
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual bool IsRunning() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float GetMovementDirection() const;
 
 protected:
 	virtual void BeginPlay() override;
 
-	
+	virtual void OnDeath();
+
+	virtual void OnHealthChanged(float Health, float HealthDelta);
+
+	UFUNCTION()
+	void OnGroundLanded(const FHitResult &Hit);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		UShooterHealthComponent* ShooterHealthComponent;
@@ -43,20 +57,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Material")
 		FName MaterialColorName = "Paint Color";
-	virtual void OnDeath();
 
-public:	
-	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-		virtual bool IsRunning() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-		float GetMovementDirection() const;
-
-private:
-	
-	void OnHealthChanged(float Health, float HealthDelta);
-	UFUNCTION()
-	void OnGroundLanded(const FHitResult& Hit);
 };

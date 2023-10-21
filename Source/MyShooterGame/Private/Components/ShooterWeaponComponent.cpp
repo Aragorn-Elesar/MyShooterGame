@@ -122,6 +122,7 @@ void UShooterWeaponComponent::EquipWeapon(int64 WeaponIndex)
 	}
 	if (CurrentWeapon)
 	{
+		CurrentWeapon->Zoom(false);
 		CurrentWeapon->StopFire();
 		AttachWeaponToSoket(CurrentWeapon, Character->GetMesh(), WeaponArmorySoketName);
 	}
@@ -306,4 +307,12 @@ bool UShooterWeaponComponent::NeedAmmo(TSubclassOf<AShooterBaseWeaponActor> Weap
 		}
 	}
 	return false;
+}
+
+void UShooterWeaponComponent::Zoom(bool Enable)
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Zoom(Enable);
+	}
 }

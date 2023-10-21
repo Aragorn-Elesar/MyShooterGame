@@ -33,6 +33,24 @@ void AShooterRifleWeaponActor::StopFire()
 	SetMuzzleFXVisible(false);
 }
 
+void AShooterRifleWeaponActor::Zoom(bool Enabled)
+{
+	const auto Controller = Cast<APlayerController>(GetController());
+	if (!Controller || !Controller->PlayerCameraManager)
+	{
+		return;
+	}
+
+
+	
+	if (Enabled)
+	{
+		Deefault_Camera_FOV = Controller->PlayerCameraManager->GetFOVAngle();
+	}
+	
+	Controller->PlayerCameraManager->SetFOV(Enabled ? FOV_Zoom : Deefault_Camera_FOV);
+}
+
 void AShooterRifleWeaponActor::MakeShot()
 {
 	if (!GetWorld() || IsAmmoEmpty())

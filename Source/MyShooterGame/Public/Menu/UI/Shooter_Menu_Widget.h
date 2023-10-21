@@ -32,6 +32,8 @@ protected:
 
 	UShooter_Game_Instance* Get_Shooter_Game_Instance() const;
 
+	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation *Animation) override;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton *Start_Game_Button;
 
@@ -47,5 +49,6 @@ protected:
 	UPROPERTY()
 	TArray<UShooter_Level_Item_Widget *> Level_Item_Widgets;
 
-	
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation *HideAnimation;
 };

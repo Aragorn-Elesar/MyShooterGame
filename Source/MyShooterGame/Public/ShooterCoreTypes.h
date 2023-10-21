@@ -26,11 +26,11 @@ struct FWeaponData
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-		TSubclassOf<AShooterBaseWeaponActor> WeaponClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<AShooterBaseWeaponActor> WeaponClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-		UAnimMontage* ReloadAnimMontage;
+	UAnimMontage* ReloadAnimMontage;
 };
 
 USTRUCT(BlueprintType)

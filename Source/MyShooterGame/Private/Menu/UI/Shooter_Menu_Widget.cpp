@@ -27,14 +27,8 @@ void UShooter_Menu_Widget::NativeOnInitialized()
 
 void UShooter_Menu_Widget::On_Start_Game()
 {
-	const auto Shooher_Game_Instance = Get_Shooter_Game_Instance();
-
-	if (!Shooher_Game_Instance)
-	{
-		return;
-	}
-
-	UGameplayStatics::OpenLevel(this, Shooher_Game_Instance->Get_Start_Level_Name().Level_Name);
+	PlayAnimation(HideAnimation);
+	
 }
 
 void UShooter_Menu_Widget::On_Quit_Game()
@@ -111,4 +105,22 @@ UShooter_Game_Instance* UShooter_Menu_Widget::Get_Shooter_Game_Instance() const
 	}
 	return GetWorld()->GetGameInstance<UShooter_Game_Instance>();
 
+}
+
+void UShooter_Menu_Widget::OnAnimationFinished_Implementation(const UWidgetAnimation *Animation)
+{
+	//Super::OnAnimationFinished_Implementation(Animation);
+	if (Animation != HideAnimation)
+	{
+		return;
+	}
+
+	const auto Shooher_Game_Instance = Get_Shooter_Game_Instance();
+
+	if (!Shooher_Game_Instance)
+	{
+		return;
+	}
+
+	UGameplayStatics::OpenLevel(this, Shooher_Game_Instance->Get_Start_Level_Name().Level_Name);
 }

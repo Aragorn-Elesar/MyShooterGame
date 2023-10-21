@@ -66,8 +66,8 @@ void UShooter_Game_Over_Widget::Update_Player_Stat()
 		}
 		PlayerStatRowWidget->Set_Name_Player(FText::FromString(PlayerState->GetPlayerName()));
 		PlayerStatRowWidget->Set_Kills_Player(FText::FromString(FString::FromInt(PlayerState->GetKills())));
-		PlayerStatRowWidget->Set_Kills_Player(FText::FromString(FString::FromInt(PlayerState->GetDeath())));
-		PlayerStatRowWidget->Set_Kills_Player(FText::FromString(FString::FromInt(PlayerState->GetTeamID())));
+		PlayerStatRowWidget->Set_Deaths_Player(FText::FromString(FString::FromInt(PlayerState->GetDeath())));
+		PlayerStatRowWidget->Set_Team_Player(FText::FromString(FString::FromInt(PlayerState->GetTeamID())));
 		PlayerStatRowWidget->Set_Indicator_Image(Controller->IsPlayerController());
 
 		Player_Stat_Box->AddChild(PlayerStatRowWidget);
