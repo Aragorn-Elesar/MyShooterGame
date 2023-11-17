@@ -63,16 +63,12 @@ private:
 	UPROPERTY()
 		UAnimMontage* CurrentreloadAnimMontage = nullptr;
 
-
 	bool EquipAnimInProgress = false;
 	bool ReloadAnimInProgress = false;
 
 	void SpawnWeapons();
 
-	void AttachWeaponToSoket(AShooterBaseWeaponActor* Weapon, USceneComponent* SceneComponent,
-		const FName& SoketName);
-
-	
+	void AttachWeaponToSoket(AShooterBaseWeaponActor* Weapon, USceneComponent* SceneComponent,const FName& SoketName);
 
 	void PlayAnimMontage(UAnimMontage* Animation);
 
